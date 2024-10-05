@@ -114,5 +114,79 @@ const parseQuestionsFromGPT = (gptContent) => {
   return questions;
 };
 
+// Analyze user performance and provide feedback
+const analyzePerformance = (req, res) => {
+  const { questions, correctAnswers, userAnswers } = req.body;
+
+  if (!questions || !correctAnswers || !userAnswers) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "Missing required fields: questions, correctAnswers, or userAnswers.",
+    });
+  }
+
+  let correctCount = 0;
+  let incorrectCount = 0;
+  const feedback = {
+    correctAnswers: [],
+    wrongAnswers: [],
+    areasToImprove: [],
+  };
+
+  questions.forEach((question, index) => {
+    const userAnswer = userAnswers[index];
+    const correctAnswer = correctAnswers[index];
+
+    if (userAnswer === correctAnswer) {
+      correctCount++;
+      feedback.correctAnswers.push({
+        question,
+        answer: userAnswer,
+      });
+    } else {
+      incorrectCount++;
+      feedback.wrongAnswers.push({
+        question,
+        answer: userAnswer,
+        correctAnswer,
+      });
+
+      // Identify area for improvement based on the question
+      feedback.areasToImprove.push({
+        question,
+        topic: identifyTopic(question), // Implement this function to identify topics
+      });
+    }
+  });
+
+  const totalQuestions = questions.length;
+  const accuracy = ((correctCount / totalQuestions) * 100).toFixed(2);
+
+  res.status(200).json({
+    success: true,
+    report: {
+      totalQuestions,
+      correctCount,
+      incorrectCount,
+      accuracy,
+      feedback,
+    },
+  });
+};
+
+// Helper function to identify the topic of a question
+const identifyTopic = (question) => {
+  // Placeholder for topic identification logic
+  // You can customize this based on your assessment topics
+  if (question.includes("Newton")) {
+    return "Newton's Laws of Motion";
+  }
+  // Add more conditions for other topics
+  return "General";
+};
+
 // Export the controller functions
-export { generateQuestions };
+export { generateQuestions, analyzePerformance };
+
+// Export the controller functions

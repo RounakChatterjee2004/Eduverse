@@ -6,6 +6,7 @@ import assessmentRoutes from "./routes/assessmentRoutes.js"; // Import assessmen
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import gptRoutes from "./routes/gptRoutes.js";
+import gptFeedback from "./routes/gptFeedback.js";
 dotenv.config();
 
 const app = express();
@@ -19,7 +20,7 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/assessment", assessmentRoutes); // Use assessment routes
 app.use("/api/gpt", gptRoutes);
-
+app.use("/api/gpt1/", gptFeedback);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
