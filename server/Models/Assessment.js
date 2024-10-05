@@ -1,21 +1,20 @@
 // models/Assessment.js
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-const assessmentSchema = new Schema({
-  name: { type: String, required: true },
-  subject: { type: String, required: true },
-  time: { type: Number, required: true }, // time in minutes
-  numberOfQuestions: { type: Number, required: true },
-  password: { type: String, required: true }, // Password to access the assessment
-  questions: [
-    {
-      question: { type: String, required: true },
-      options: [{ type: String, required: true }], // Array of 4 options
-      correctOption: { type: String, required: true }, // Correct option
-    },
-  ],
+const questionSchema = new mongoose.Schema({
+  question: { type: String, required: true },
+  options: { type: [String], required: true }, // [A, B, C, D]
+  correctOption: { type: String, required: true },
 });
 
-const Assessment = model("Assessment", assessmentSchema);
+const assessmentSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  subject: { type: String, required: true },
+  time: { type: Number, required: true },
+  numberOfQuestions: { type: Number, required: true },
+  questions: { type: [questionSchema], required: true },
+  password: { type: String, required: true },
+});
 
+const Assessment = mongoose.model("Assessment", assessmentSchema);
 export default Assessment;
